@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LastSeenDemo
+﻿namespace LastSeenDemo
 {
     public class ReportRequest
     {
         public List<string> Metrics { get; set; }
         public List<Guid> Users { get; set; }
-        public DateTimeOffset From { get; set; }
-        public DateTimeOffset To { get; set; }
     }
 
     public class ReportItem
@@ -24,7 +19,7 @@ namespace LastSeenDemo
     public class Report
     {
         public string Name { get; set; }
-        public static List<Guid> Users { get; set; }
+        public List<Guid> Users { get; set; }
         public List<string> Metrics { get; set; }
         private readonly Worker _worker;
         private readonly OnlineDetector _detector;

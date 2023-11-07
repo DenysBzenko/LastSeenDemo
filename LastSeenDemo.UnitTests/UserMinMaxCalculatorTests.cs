@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using LastSeenDemo.UnitTests.Mocks;
-using Mocks;
-using Xunit;
+﻿using LastSeenDemo.UnitTests.Mocks;
 
 namespace LastSeenDemo.UnitTests
 {

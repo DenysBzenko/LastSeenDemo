@@ -1,8 +1,6 @@
 ﻿using System.Net;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
-using JsonSerializerOptions = System.Text.Json.JsonSerializerOptions;
 
 namespace LastSeenDemo.E2E;
 

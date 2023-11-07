@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using System.Text;
-using System.Text.Json;
+﻿// <copyright file="Program.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System.Reflection;
 using LastSeenDemo;
-
-
 
 // Global Application Services
 var dateTimeProvider = new DateTimeProvider();
@@ -18,7 +18,7 @@ var worker = new Worker(userLoader, allUsersTransformer);
 var userMinMaxCalculator = new UserMinMaxCalculator(detector);
 
 // End Global Application Services
-// End Global Application Services
+var reports = new Dictionary<string, Report>();
 
 Task.Run(worker.LoadDataPeriodically); // Launch collecting data in background
 
@@ -26,27 +26,28 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 // APIs
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello!"); // Just Demo Endpoint
-app.MapGet("/version", () => new
-{
-    Version = 2,
-    Assembly = Assembly.GetAssembly(typeof(Program)).Location,
-    Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program)).Location)
-});
+app.MapGet(
+    "/version",
+    () => new
+    {
+        Version = 2,
+        Assembly = Assembly.GetAssembly(typeof(Program))?.Location,
+        Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program)) !.Location),
+    });
 
 Setup2ndAssignmentsEndpoints();
 Setup3rdAssignmentsEndpoints();
 Setup4thAssignmentsEndpoints();
+SetupReportsEndpoints();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.Run();
-
 
 void Setup2ndAssignmentsEndpoints()
 {
@@ -74,32 +75,33 @@ void Setup3rdAssignmentsEndpoints()
     app.MapGet("/api/stats/user", (DateTimeOffset date, Guid userId) =>
     {
         if (!worker.Users.ContainsKey(userId))
+        {
             return Results.NotFound(new { userId });
+        }
+
         var user = worker.Users[userId];
         return Results.Json(new
         {
             wasUserOnline = detector.Detect(user, date),
-            nearestOnlineTime = detector.GetClosestOnlineTime(user, date)
+            nearestOnlineTime = detector.GetClosestOnlineTime(user, date),
         });
     });
 
     // Feature#3 - Implement endpoint that returns historical data for a concrete user
-    app.MapGet("/api/predictions/users", (DateTimeOffset date) =>
-    {
-        return new { onlineUsers = predictor.PredictUsersOnline(worker.Users, date) };
-    });
+    app.MapGet(
+        "/api/predictions/users",
+        (DateTimeOffset date) => new { onlineUsers = predictor.PredictUsersOnline(worker.Users, date) });
 
     // Feature#4 - Implement a prediction mechanism based on a historical data for concrete user
     app.MapGet("/api/predictions/user", (Guid userId, DateTimeOffset date, float tolerance) =>
     {
         if (!worker.Users.TryGetValue(userId, out var user))
-            return Results.NotFound(new { userId });
-        var onlineChance = predictor.PredictUserOnline(user, date);
-        return Results.Json(new
         {
-            onlineChance,
-            willBeOnline = onlineChance > tolerance
-        });
+            return Results.NotFound(new { userId });
+        }
+
+        var onlineChance = predictor.PredictUserOnline(user, date);
+        return Results.Json(new { onlineChance, willBeOnline = onlineChance > tolerance });
     });
 }
 
@@ -136,92 +138,59 @@ void Setup4thAssignmentsEndpoints()
 }
 
 
-
-void SetupReportsEndpoints(object reportRequest1)
+void SetupReportsEndpoints()
 {
-    // Feature#1 - Implement reports functionality
-    app.MapPost("/api/report/{reportName}", async (HttpContext context, string reportName) =>
-    {
-        using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8))
-        {
-            var requestBody = await reader.ReadToEndAsync();
-            var reportRequest = JsonSerializer.Deserialize<ReportRequest>(requestBody);
-            if (reportRequest == null)
-            {
-                context.Response.StatusCode = 400;
-                return;
-            }
-            context.Response.StatusCode = 200;
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(JsonSerializer.Serialize(new { }));
-        }
-    });
     var userGuids = new List<Guid>
     {
         new Guid("2fba2529-c166-8574-2da2-eac544d82634"),
         new Guid("8b0b5db6-19d6-d777-575e-915c2a77959a"),
         new Guid("e13412b2-fe46-7149-6593-e47043f39c91"),
         new Guid("cbf0d80b-8532-070b-0df6-a0279e65d0b2"),
-        new Guid("de5b8815-1689-7c78-44e1-33375e7e2931")
+        new Guid("de5b8815-1689-7c78-44e1-33375e7e2931"),
     };
-    
-   app.MapGet("/api/report/{reportName}", (string reportName, DateTimeOffset from, DateTimeOffset to) =>
-{
-    var userReports = new List<object>();
-    var globalDailyAverages = new List<double>();
-    var globalWeeklyAverages = new List<double>();
-    var globalTotals = new List<double>();
-    var globalMins = new List<double>();
-    var globalMaxs = new List<double>();
 
-    foreach (var userId in userGuids)
+    // Feature#1 - Implement reports functionality
+    app.MapPost("/api/report/{reportName}", (string reportName, ReportRequest request) =>
     {
-        if (worker.Users.TryGetValue(userId, out var user))
+        if (reports.ContainsKey(reportName))
         {
-            var dailyAverage = detector.CalculateDailyAverageForUser(user);
-            var weeklyAverage = detector.CalculateWeeklyAverageForUser(user);
-            var total = detector.CalculateTotalTimeForUser(user);
-            var minMax = userMinMaxCalculator.CalculateMinMax(user, from, to);
-
-            userReports.Add(new
-            {
-                userId = userId,
-                metrics = new List<object>
-                {
-                    new { dailyAverage = dailyAverage },
-                    new { weeklyAverage = weeklyAverage },
-                    new { total = total },
-                    new { min = minMax.Item1 },
-                    new { max = minMax.Item2 }
-                }
-            });
-
-            globalDailyAverages.Add(dailyAverage);
-            globalWeeklyAverages.Add(weeklyAverage);
-            globalTotals.Add(total);
-            globalMins.Add(minMax.Item1);
-            globalMaxs.Add(minMax.Item2);
+            return Results.BadRequest("Report already exists");
         }
-    }
 
-    
-    var globalMetrics = new
+        var report = new Report(reportName, request.Users, request.Metrics, worker, detector);
+        reports.Add(reportName, report);
+        return Results.NoContent();
+    });
+
+    app.MapGet("/api/reports", () => Results.Ok(reports.Values));
+
+    app.MapGet("/api/report/{reportName}", (string reportName, DateTimeOffset from, DateTimeOffset to) =>
     {
-        dailyAverage = globalDailyAverages.Any() ? globalDailyAverages.Average() : 0,
-        weeklyAverage = globalWeeklyAverages.Any() ? globalWeeklyAverages.Average() : 0,
-        total = globalTotals.Sum(),
-        min = globalMins.Any() ? globalMins.Min() : 0,
-        max = globalMaxs.Any() ? globalMaxs.Max() : 0
-    };
+        var report = new List<Dictionary<string, object>>();
 
-    // Construct the final response
-    var reportResponse = new
-    {
-        users = userReports,
-        globalMetrics = globalMetrics
-    };
+        foreach (var userId in userGuids)
+        {
+            if (worker.Users.TryGetValue(userId, out var user))
+            {
+                try
+                {
+                    var userReport = new Dictionary<string, object> { { "UserId", userId } };
 
-    return Results.Json(reportResponse);
-});
+                    userReport["Total"] = detector.CalculateTotalTimeForUser(user);
+                    userReport["DailyAverage"] = detector.CalculateDailyAverageForUser(user);
+                    userReport["WeeklyAverage"] = detector.CalculateWeeklyAverageForUser(user);
+                    var (min, max) = userMinMaxCalculator.CalculateMinMax(user, from, to);
+                    userReport["Min"] = min;
+                    userReport["Max"] = max;
+                    report.Add(userReport);
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+            }
+        }
 
+        return Results.Ok(report);
+    });
 }

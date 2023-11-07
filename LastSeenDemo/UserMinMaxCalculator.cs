@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace LastSeenDemo
+﻿namespace LastSeenDemo
 {
     public class UserMinMaxCalculator
     {
@@ -16,17 +12,23 @@ namespace LastSeenDemo
         public (double, double) CalculateMinMax(List<UserTimeSpan> value, DateTimeOffset from, DateTimeOffset to)
         {
             var listOnline = new List<double>();
-
             double minimum = double.MaxValue;
-            double maximum = double.MinValue;
+            double maximum = 0.0;
 
             while (from <= to)
             {
                 double dailyOnlineTime = _onlineDetector.CalculateTotalTimeForUser(value, from, from.AddDays(1));
                 listOnline.Add(dailyOnlineTime);
 
-                minimum = Math.Min(minimum, dailyOnlineTime);
-                maximum = Math.Max(maximum, dailyOnlineTime);
+                if (dailyOnlineTime < minimum)
+                {
+                    minimum = dailyOnlineTime;
+                }
+
+                if (dailyOnlineTime > maximum)
+                {
+                    maximum = dailyOnlineTime;
+                }
 
                 from = from.AddDays(1);
             }
