@@ -1,5 +1,11 @@
-﻿using System.Reflection;
+﻿// <copyright file="Program.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+#pragma warning disable SA1200
+using System.Reflection;
 using LastSeenDemo;
+#pragma warning restore SA1200
 
 // Global Application Services
 var dateTimeProvider = new DateTimeProvider();
@@ -132,7 +138,6 @@ void Setup4thAssignmentsEndpoints()
         return Results.Ok();
     });
 }
-
 
 void SetupReportsEndpoints()
 {

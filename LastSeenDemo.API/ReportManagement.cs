@@ -1,36 +1,39 @@
-﻿using System.Text.Json;
+﻿// <copyright file="ReportManagement.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace LastSeenDemo
+namespace LastSeenDemo.API
 {
+    using System.Text.Json;
+
+    // Assuming Report is a class in your namespace
     public class ReportManagement
     {
-        private List<Report> reports;
-        private string reportsFilePath;
+        // Fields
+        private readonly string _reportsFilePath = "reports.json";
 
-        public List<Report> Reports
-        {
-            get { return reports; }
-            set { reports = value; }
-        }
-
+        // Constructors
         public ReportManagement()
         {
-            reports = new List<Report>();
-            reportsFilePath = "reports.json";
-            LoadReports();
+            this.Reports = new List<Report>();
+            this.LoadReports();
         }
 
+        // Properties
+        public List<Report>? Reports { get; private set; }
+
+        // Methods
         public void AddReport(Report report)
         {
-            reports.Add(report);
+            this.Reports?.Add(report);
         }
 
         private void LoadReports()
         {
-            if (File.Exists(this.reportsFilePath))
+            if (File.Exists(this._reportsFilePath))
             {
-                string json = File.ReadAllText(this.reportsFilePath);
-                this.reports = JsonSerializer.Deserialize<List<Report>>(json);
+                string json = File.ReadAllText(this._reportsFilePath);
+                this.Reports = JsonSerializer.Deserialize<List<Report>>(json);
             }
         }
     }

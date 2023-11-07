@@ -1,4 +1,6 @@
-﻿namespace LastSeenDemo.IntegrationTest;
+﻿using LastSeenDemo.API;
+
+namespace LastSeenDemo.IntegrationTest;
 
 public class ReportManagementTests
 {
@@ -14,7 +16,7 @@ public class ReportManagementTests
     public void AddReport_ShouldIncreaseReportsListSize()
     {
         var reportManagement = new ReportManagement();
-        var initialCount = reportManagement.Reports.Count;
+        var initialCount = reportManagement.Reports!.Count;
 
         var newReport = new Report("TestReport", new List<Guid>(), new List<string>(), null, null);
         reportManagement.AddReport(newReport);

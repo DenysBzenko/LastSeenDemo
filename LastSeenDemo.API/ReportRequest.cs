@@ -1,56 +1,71 @@
-﻿namespace LastSeenDemo
+﻿// <copyright file="ReportRequest.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace LastSeenDemo
 {
     public class ReportRequest
     {
-        public List<string> Metrics { get; set; }
-        public List<Guid> Users { get; set; }
+        public List<string>? Metrics { get; set; }
+
+        public List<Guid>? Users { get; set; }
     }
 
     public class ReportItem
     {
         public Guid UserId { get; set; }
+
         public double Total { get; set; }
+
         public double DailyAverage { get; set; }
+
         public double WeeklyAverage { get; set; }
+
         public double Min { get; set; }
+
         public double Max { get; set; }
     }
 
     public class Report
     {
         public string Name { get; set; }
-        public List<Guid> Users { get; set; }
-        public List<string> Metrics { get; set; }
-        private readonly Worker _worker;
-        private readonly OnlineDetector _detector;
-        private readonly UserMinMaxCalculator _minMax;
 
-        public Report(string reportName, List<Guid> users, List<string> metrics, Worker worker, OnlineDetector onlineDetector)
+        public List<Guid>? Users { get; set; }
+
+        public List<string>? Metrics { get; set; }
+
+#pragma warning disable SA1201
+        private readonly Worker worker;
+#pragma warning restore SA1201
+        private readonly OnlineDetector detector;
+        private readonly UserMinMaxCalculator minMax;
+
+        public Report(string reportName, List<Guid>? users, List<string>? metrics, Worker worker, OnlineDetector onlineDetector)
         {
-            Name = reportName;
-            Metrics = metrics;
-            _worker = worker;
-            _detector = onlineDetector;
-            _minMax = new UserMinMaxCalculator(_detector);
-            Users = users;
+            this.Name = reportName;
+            this.Metrics = metrics;
+            this.worker = worker;
+            this.detector = onlineDetector;
+            this.minMax = new UserMinMaxCalculator(this.detector);
+            this.Users = users;
         }
 
         public List<ReportItem> CreateReport(DateTimeOffset from, DateTimeOffset to)
         {
             var report = new List<ReportItem>();
 
-            foreach (var userId in Users)
+            foreach (var userId in this.Users!)
             {
-                if (_worker.Users.TryGetValue(userId, out var user))
+                if (this.worker.Users.TryGetValue(userId, out var user))
                 {
                     var userReport = new ReportItem
                     {
                         UserId = userId,
-                        Total = Metrics.Contains("total") ? _detector.CalculateTotalTimeForUser(user) : 0,
-                        DailyAverage = Metrics.Contains("dailyAverage") ? _detector.CalculateDailyAverageForUser(user) : 0,
-                        WeeklyAverage = Metrics.Contains("weeklyAverage") ? _detector.CalculateWeeklyAverageForUser(user) : 0,
-                        Min = Metrics.Contains("min") ? _minMax.CalculateMinMax(user, from, to).Item1 : 0,
-                        Max = Metrics.Contains("max") ? _minMax.CalculateMinMax(user, from, to).Item2 : 0
+                        Total = this.Metrics!.Contains("total") ? this.detector.CalculateTotalTimeForUser(user) : 0,
+                        DailyAverage = this.Metrics.Contains("dailyAverage") ? this.detector.CalculateDailyAverageForUser(user) : 0,
+                        WeeklyAverage = this.Metrics.Contains("weeklyAverage") ? this.detector.CalculateWeeklyAverageForUser(user) : 0,
+                        Min = this.Metrics.Contains("min") ? this.minMax.CalculateMinMax(user, from, to).Item1 : 0,
+                        Max = this.Metrics.Contains("max") ? this.minMax.CalculateMinMax(user, from, to).Item2 : 0,
                     };
 
                     report.Add(userReport);
@@ -61,4 +76,3 @@
         }
     }
 }
-
