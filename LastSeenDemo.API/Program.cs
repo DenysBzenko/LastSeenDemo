@@ -1,8 +1,4 @@
-﻿// <copyright file="Program.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
-using System.Reflection;
+﻿using System.Reflection;
 using LastSeenDemo;
 
 // Global Application Services
@@ -10,7 +6,7 @@ var dateTimeProvider = new DateTimeProvider();
 var loader = new Loader();
 var detector = new OnlineDetector(dateTimeProvider);
 var predictor = new Predictor(detector);
-var userLoader = new UserLoader(loader, "https://sef.podkolzin.consulting/api/users/lastSeen");
+var userLoader = new UserLoader(loader, "sef.podkolzin.consulting/api/users/lastSeen");
 var application = new LastSeenApplication(userLoader);
 var userTransformer = new UserTransformer(dateTimeProvider);
 var allUsersTransformer = new AllUsersTransformer(userTransformer);
@@ -59,15 +55,6 @@ void Setup3rdAssignmentsEndpoints()
     // Feature#1 - Implement endpoint that returns historical data for all users
     app.MapGet("/api/stats/users/", (DateTimeOffset date) =>
     {
-        // int usersOnline = 0;
-        // foreach (var (_, user) in users)
-        // {
-        //   if (detector.Detect(user, date))
-        //   {
-        //     usersOnline++;
-        //   }
-        // }
-        // return new { usersOnline };
         return new { usersOnline = detector.CountOnline(worker.Users, date) };
     });
 
@@ -111,7 +98,10 @@ void Setup4thAssignmentsEndpoints()
     app.MapGet("/api/stats/user/total", (Guid userId) =>
     {
         if (!worker.Users.TryGetValue(userId, out var user))
+        {
             return Results.NotFound(new { userId });
+        }
+
         return Results.Json(new { totalTime = detector.CalculateTotalTimeForUser(user) });
     });
 
@@ -119,7 +109,10 @@ void Setup4thAssignmentsEndpoints()
     app.MapGet("/api/stats/user/average", (Guid userId) =>
     {
         if (!worker.Users.TryGetValue(userId, out var user))
+        {
             return Results.NotFound(new { userId });
+        }
+
         return Results.Json(new
         {
             dailyAverage = detector.CalculateDailyAverageForUser(user),
@@ -131,7 +124,10 @@ void Setup4thAssignmentsEndpoints()
     app.MapPost("/api/user/forget", (Guid userId) =>
     {
         if (!worker.Users.ContainsKey(userId))
+        {
             return Results.NotFound(new { userId });
+        }
+
         worker.Forget(userId);
         return Results.Ok();
     });

@@ -27,10 +27,10 @@ namespace LastSeenDemo
 
         private void LoadReports()
         {
-            if (File.Exists(reportsFilePath))
+            if (File.Exists(this.reportsFilePath))
             {
-                string json = File.ReadAllText(reportsFilePath);
-                reports = JsonSerializer.Deserialize<List<Report>>(json);
+                string json = File.ReadAllText(this.reportsFilePath);
+                this.reports = JsonSerializer.Deserialize<List<Report>>(json);
             }
         }
     }
