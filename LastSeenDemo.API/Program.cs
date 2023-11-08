@@ -23,7 +23,7 @@ var userMinMaxCalculator = new UserMinMaxCalculator(detector);
 var reports = new Dictionary<string, Report>();
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-Task.Run(worker.LoadDataPeriodically); // Launch collecting data in background
+Task.Run(worker.LoadDataPeriodically);  // Launch collecting data in background
 #pragma warning restore CS4014
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen();
 // APIs
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello!"); // Just Demo Endpoint
+app.MapGet("/", () => "Hello!");  // Just Demo Endpoint
 app.MapGet(
     "/version",
     () => new
@@ -55,7 +55,7 @@ app.Run();
 
 void Setup2ndAssignmentsEndpoints()
 {
-    app.MapGet("/formatted", () => application.Show(DateTimeOffset.Now)); // Assignment#2 in API form
+    app.MapGet("/formatted", () => application.Show(DateTimeOffset.Now));  // Assignment#2 in API form
 }
 
 void Setup3rdAssignmentsEndpoints()

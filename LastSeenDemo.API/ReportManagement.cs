@@ -10,7 +10,7 @@ namespace LastSeenDemo.API
     public class ReportManagement
     {
         // Fields
-        private readonly string _reportsFilePath = "reports.json";
+        private readonly string reportsFilePath = "reports.json";
 
         // Constructors
         public ReportManagement()
@@ -30,9 +30,9 @@ namespace LastSeenDemo.API
 
         private void LoadReports()
         {
-            if (File.Exists(this._reportsFilePath))
+            if (File.Exists(this.reportsFilePath))
             {
-                string json = File.ReadAllText(this._reportsFilePath);
+                string json = File.ReadAllText(this.reportsFilePath);
                 this.Reports = JsonSerializer.Deserialize<List<Report>>(json);
             }
         }
