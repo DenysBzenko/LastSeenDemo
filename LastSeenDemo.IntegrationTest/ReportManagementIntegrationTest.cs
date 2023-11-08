@@ -18,7 +18,7 @@ public class ReportManagementTests
         var reportManagement = new ReportManagement();
         var initialCount = reportManagement.Reports!.Count;
 
-        var newReport = new Report("TestReport", new List<Guid>(), new List<string>(), null, null);
+        var newReport = new API.Report("TestReport", new List<Guid>(), new List<string>(), null, null);
         reportManagement.AddReport(newReport);
 
         Assert.Equal(initialCount + 1, reportManagement.Reports.Count);
