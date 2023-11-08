@@ -38,7 +38,7 @@ app.MapGet(
     {
         Version = 2,
         Assembly = Assembly.GetAssembly(typeof(Program))?.Location,
-        Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program)) !.Location),
+        Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program))!.Location),
     });
 
 Setup2ndAssignmentsEndpoints();
