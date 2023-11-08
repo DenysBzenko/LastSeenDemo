@@ -1,4 +1,4 @@
-using LastSeenDemo;
+﻿using LastSeenDemo;
 
 public class UserLoader
 {
@@ -16,7 +16,7 @@ public class UserLoader
         while (true)
         {
             var result = _loader.Load(_rootUrl + $"?offset={users.Count}");
-            if (result.Data.Length == 0)
+            if (result.Data?.Length == 0)
             {
                 break;
             }

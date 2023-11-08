@@ -28,4 +28,6 @@ public class StatsApiTests
         Assert.Equal(JTokenType.Boolean, result.Property("wasUserOnline").Value.Type);
         Assert.NotNull(result.Property("nearestOnlineTime"));
     }
+
 }
+
