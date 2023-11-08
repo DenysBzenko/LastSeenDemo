@@ -7,14 +7,13 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>CA1031</NoWarn>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile> <!-- XML documentation generation is set here -->
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LastSeenDemo\LastSeenDemo.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.4" PrivateAssets="all"/>
-    <!-- The following lines should be inside the PackageReference tag -->
     <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="3.3.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
