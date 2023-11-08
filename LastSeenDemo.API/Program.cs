@@ -40,12 +40,12 @@ app.MapGet(
     {
         Version = 2,
         Assembly = Assembly.GetAssembly(typeof(Program))?.Location,
-        Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program))!.Location),
+        Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program)) !.Location),
     });
 
 Setup2ndAssignmentsEndpoints();
 Setup3rdAssignmentsEndpoints();
-Setup4thAssignmentsEndpoints();
+Setup4ThAssignmentsEndpoints();
 SetupReportsEndpoints();
 
 app.UseSwagger();
@@ -61,10 +61,7 @@ void Setup2ndAssignmentsEndpoints()
 void Setup3rdAssignmentsEndpoints()
 {
     // Feature#1 - Implement endpoint that returns historical data for all users
-    app.MapGet("/api/stats/users/", (DateTimeOffset date) =>
-    {
-        return new { usersOnline = detector.CountOnline(worker.Users, date) };
-    });
+    app.MapGet("/api/stats/users/", (DateTimeOffset date) => new { usersOnline = detector.CountOnline(worker.Users, date) });
 
     // Feature#2 - Implement endpoint that returns historical data for a concrete user
     app.MapGet("/api/stats/user", (DateTimeOffset date, Guid userId) =>
@@ -100,7 +97,7 @@ void Setup3rdAssignmentsEndpoints()
     });
 }
 
-void Setup4thAssignmentsEndpoints()
+void Setup4ThAssignmentsEndpoints()
 {
     // Feature#1 - Implement an endpoint that returns total time that user was online
     app.MapGet("/api/stats/user/total", (Guid userId) =>
