@@ -9,7 +9,7 @@
     <NoWarn>CA1031</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <NoWarn>$(NoWarn);SA1600</NoWarn>
+    <NoWarn>$(NoWarn);SA1009;SA1402;SA1516;SA1600;CA9998;CA1812</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
