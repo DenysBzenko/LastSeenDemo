@@ -39,8 +39,8 @@ app.MapGet(
     () => new
     {
         Version = 2,
-        Assembly = Assembly.GetAssembly(typeof(Program))?.Location,
-        Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program)) !.Location),
+        Assembly = Assembly.GetAssembly(typeof(Program)) ?.Location,
+        Modified = File.GetLastWriteTime(Assembly.GetAssembly(typeof(Program)) !.Location) ,
     });
 
 Setup2ndAssignmentsEndpoints();
@@ -74,8 +74,8 @@ void Setup3rdAssignmentsEndpoints()
         var user = worker.Users[userId];
         return Results.Json(new
         {
-            wasUserOnline = detector.Detect(user, date),
-            nearestOnlineTime = detector.GetClosestOnlineTime(user, date),
+            wasUserOnline = detector.Detect(user, date) ,
+            nearestOnlineTime = detector.GetClosestOnlineTime(user, date) ,
         });
     });
 
@@ -120,8 +120,8 @@ void Setup4ThAssignmentsEndpoints()
 
         return Results.Json(new
         {
-            dailyAverage = detector.CalculateDailyAverageForUser(user),
-            weeklyAverage = detector.CalculateWeeklyAverageForUser(user),
+            dailyAverage = detector.CalculateDailyAverageForUser(user) ,
+            weeklyAverage = detector.CalculateWeeklyAverageForUser(user) ,
         });
     });
 
@@ -142,11 +142,11 @@ void SetupReportsEndpoints()
 {
     var userGuids = new List<Guid>
     {
-        new Guid("2fba2529-c166-8574-2da2-eac544d82634"),
-        new Guid("8b0b5db6-19d6-d777-575e-915c2a77959a"),
-        new Guid("e13412b2-fe46-7149-6593-e47043f39c91"),
-        new Guid("cbf0d80b-8532-070b-0df6-a0279e65d0b2"),
-        new Guid("de5b8815-1689-7c78-44e1-33375e7e2931"),
+        new Guid("2fba2529-c166-8574-2da2-eac544d82634") ,
+        new Guid("8b0b5db6-19d6-d777-575e-915c2a77959a") ,
+        new Guid("e13412b2-fe46-7149-6593-e47043f39c91") ,
+        new Guid("cbf0d80b-8532-070b-0df6-a0279e65d0b2") ,
+        new Guid("de5b8815-1689-7c78-44e1-33375e7e2931") ,
     };
 
     // Feature#1 - Implement reports functionality
