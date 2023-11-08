@@ -6,9 +6,9 @@ namespace LastSeenDemo
 {
     public class ReportRequest
     {
-        public List<string>? Metrics { get;  }
+        public List<string>? Metrics { get; }
 
-        public List<Guid>? Users { get;  }
+        public List<Guid>? Users { get; }
     }
 
     public class ReportItem
@@ -30,9 +30,9 @@ namespace LastSeenDemo
     {
         public string Name { get; set; }
 
-        public List<Guid>? Users { get;  }
+        public List<Guid>? Users { get; }
 
-        public List<string>? Metrics { get;  }
+        public List<string>? Metrics { get; }
 
 #pragma warning disable SA1201
         private readonly Worker worker;
